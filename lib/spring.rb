@@ -4,6 +4,7 @@ require "pty"
 require "io/console"
 
 require "spring/version"
+require "spring/logger"
 require "spring/sid"
 require "spring/env"
 require "spring/commands"
@@ -31,6 +32,7 @@ class Spring
   end
 
   def boot_server
+    Spring.logger.info('booting a new server...')
     # Boot the server into the process group of the current session.
     # This will cause it to be automatically killed once the session
     # ends (i.e. when the user closes their terminal).
@@ -40,9 +42,12 @@ class Spring
 
   def run(args)
     boot_server unless server_running?
+    Spring.logger.info("server is up, connecting to #{env.socket_name}")
 
     socket = UNIXSocket.open(env.socket_name)
-    socket.write rails_env_for(args.first)
+    rails_env = rails_env_for(args.first)
+    Spring.logger.info("using '#{rails_env}' environment")
+    socket.write rails_env
     socket.close
 
     socket = UNIXSocket.open(env.socket_name)

@@ -25,6 +25,7 @@ class Spring
     end
 
     def start
+      Spring.logger.info "starting application instance..."
       require "./config/application"
 
       # The test environment has config.cache_classes = true set by default.
@@ -65,6 +66,8 @@ class Spring
         args_length = client.gets.to_i
         args        = args_length.times.map { client.read(client.gets.to_i) }
         command     = Spring.command(args.shift)
+
+        Spring.logger.info("executing '#{command}' in '#{ENV['RAILS_ENV']}' environment")
 
         setup command
 

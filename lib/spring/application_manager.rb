@@ -1,4 +1,5 @@
 require "socket"
+require "spring/logger"
 require "spring/application"
 require "mutex_m"
 
